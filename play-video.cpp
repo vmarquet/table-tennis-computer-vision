@@ -44,25 +44,43 @@ int main(int argc, char** argv)
 
     // counters for computing means
     int frame_number = 1;
-    int total_grab_frame_time = 0;  // milliseconds
-    int total_imshow_time = 0;  // milliseconds
-    int total_remaining_time_to_wait = 0;  // milliseconds
+    // all following times in milliseconds
+    int total_grab_frame_time = 0;
+    int total_retrieve_frame_time = 0;
+    int total_imshow_time = 0;
+    int total_remaining_time_to_wait = 0;
 
     while(true)
     {
         // time counter for speed analysis purposes
         auto start_time = chrono::high_resolution_clock::now();
 
+        // nota bene: the usual `capture >> frame;` can be separated into two operations:
+        // 1) capture.grab();
+        // 2) capture.retrieve(Mat frame);
+        // cf http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html#videocapture-grab
+
         // we grab a new image
-        capture >> frame;
-        if(frame.empty())
-            break;
+        capture.grab();
 
         // we compute and display the time needed to grab a new image, and the mean time
         auto end_time = chrono::high_resolution_clock::now();
         int grab_frame_time = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
         total_grab_frame_time += grab_frame_time;
         cout << "grab " << grab_frame_time << " (" << total_grab_frame_time/frame_number << ")";
+
+        // reset timer to mesure retrieve frame time
+        start_time = chrono::high_resolution_clock::now();
+
+        capture.retrieve(frame);
+        if(frame.empty())
+            break;
+
+        // we compute and display the time needed to grab a new image, and the mean time
+        end_time = chrono::high_resolution_clock::now();
+        int retrieve_frame_time = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+        total_retrieve_frame_time += retrieve_frame_time;
+        cout << "  retrieve " << retrieve_frame_time << " (" << total_retrieve_frame_time/frame_number << ")";
 
         // reset time counter
         start_time = chrono::high_resolution_clock::now();
@@ -77,7 +95,7 @@ int main(int argc, char** argv)
         cout << "  imshow " << imshow_time << " (" << total_imshow_time/frame_number << ")";
 
         // we compute and display the time left before we need to display the next picture
-        int remaining_time_to_wait = frame_duration - (grab_frame_time + imshow_time);
+        int remaining_time_to_wait = frame_duration - (grab_frame_time + retrieve_frame_time + imshow_time);
         if (remaining_time_to_wait >= 0)
             cout << "  ahead " << remaining_time_to_wait;
         else
