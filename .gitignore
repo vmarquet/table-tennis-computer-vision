@@ -1,0 +1,8 @@
+# temporary files
+*~
+.DS_Store
+
+# video files
+*.mp4
+*.MP4
+*.mov
