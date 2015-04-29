@@ -4,6 +4,9 @@
 // a program to open a video file, and to display it
 // it also print the mean time to grab frames and display them
 // useful to check if your computer is fast enough to process the video in real-time
+// WARNING: check that the framerate of the video is correctly detected by OpenCV
+//          (it is printed at the beginning of the program), if it is not,
+//          the statistics will be false
 
 #include <iostream>
 #include <chrono>
