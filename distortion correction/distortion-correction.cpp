@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 
 using namespace cv;
 using namespace std;
@@ -32,6 +33,16 @@ int main(int argc, char** argv) {
     Mat cameraMatrix, distortionCoeffs;
     fs["Camera_Matrix"] >> cameraMatrix;
     fs["Distortion_Coefficients"] >> distortionCoeffs;
+    double image_width, image_height;
+    fs["image_Width"] >> image_width;
+    fs["image_Height"] >> image_height;
+    Size image_size(image_width, image_height);
+
+    // we get the optimal new camera matrix
+    // needed to prevent the undistorted picture from being cropped
+    Mat newCameraMatrix = getOptimalNewCameraMatrix(cameraMatrix, distortionCoeffs, image_size, 0.5);
+    // Nota bene: it is possible to change the last parameter (alpha) of the previous function call
+    // between 0 and 1 depending on if we want the resulting image to be cropped or not
 
     // we compute the frame duration
     int FPS = capture.get(CV_CAP_PROP_FPS);
@@ -42,7 +53,7 @@ int main(int argc, char** argv) {
 
     // we read and display the video file, image after image
     Mat frame, frame_undistorted;
-    namedWindow(video_filename, 1);
+    namedWindow(video_filename, WINDOW_AUTOSIZE);
 
     while(true) {
         // we get a new image
@@ -53,7 +64,7 @@ int main(int argc, char** argv) {
             break;
 
         // we undistort the frame
-        undistort(frame, frame_undistorted, cameraMatrix, distortionCoeffs);
+        undistort(frame, frame_undistorted, cameraMatrix, distortionCoeffs, newCameraMatrix);
 
         // we display the image
         imshow(video_filename, frame_undistorted);
