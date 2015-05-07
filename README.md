@@ -23,3 +23,12 @@ To use the Python bindings, you must create symlinks in the directory where Pyth
 sudo ln -s /usr/local/Cellar/opencv/2.4.11/lib/python2.7/site-packages/cv.py /Library/Python/2.7/site-packages/cv.py
 sudo ln -s /usr/local/Cellar/opencv/2.4.11/lib/python2.7/site-packages/cv2.so /Library/Python/2.7/site-packages/cv2.so
 ```
+
+
+Advancement
+===========
+
+1. First step: [camera calibration](camera calibration)
+1. Second step: [distortion correction](distortion correction)
+
+
