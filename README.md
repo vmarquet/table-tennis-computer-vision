@@ -6,8 +6,8 @@ The goal of the project is to apply computer vision with [OpenCV](http://opencv.
 Installation
 ============
 
-OpenCV
-------
+OpenCV 2.4
+----------
 
 ### Mac OS X
 
