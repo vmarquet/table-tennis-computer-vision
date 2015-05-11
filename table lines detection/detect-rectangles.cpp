@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 
     for(vector<int>::size_type i = 0; i != filenames.size(); i++)
     {
-        Mat image = imread(filenames.at(i), 1);
+        Mat image = imread(filenames.at(i), CV_LOAD_IMAGE_COLOR);
         if( image.empty() )
         {
             cout << "Couldn't load " << filenames.at(i) << endl;
