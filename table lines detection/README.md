@@ -43,9 +43,37 @@ Then, we can apply a closing to join the lines of the table and fill gaps, but i
 ![closing](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdM091OU8zb0F2azQ)
 
 
+Hough transform on binarized image
+----------------------------------
+
+### Step 1
+
+We apply the Hough transform after a Canny edge detection. This gave me about 20 line segments.
+
+![hough 1](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdTEh2dGNoTlhKR28)
+
+We classify all lines in four categories:
+
+* the horizontal lines in the upper part
+* the horizontal lines in the lower part
+* the vertical lines at the left
+* the vertical lines at the right
 
 
+### Step 2
 
+With some math, we can compute all the line intersections around each corner in the table.
+
+![hough 2](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdYUloWXE1RmkxcTA)
+
+
+### Step 3
+
+So we have a lot of candidates for each corner of the table. The corner we select as the coordinate of the real corner of the table is the farther corner from the center of the table.
+
+![hough 3](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdX2w0ZG44Yk5oXzg)
+
+** WARNING ** : this algorithm suppose that the anti-distortion filter was successful and effective. If there is some [barrel distortion](http://en.wikipedia.org/wiki/File:Barrel_distortion.svg) on the input picture, this algorithm will give false corner coordinates that are farther from the center of the table than the actual real corners.
 
 
 
