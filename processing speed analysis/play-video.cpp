@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
     // we read and display the video file, image after image
     Mat frame;
-    namedWindow(videofilename, 1);
+    namedWindow(videofilename, WINDOW_AUTOSIZE);
 
     // counters for computing means
     int frame_number = 1;
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
         remaining_time_to_wait = max(1, remaining_time_to_wait);
 
         // press 'q' to quit
-        char key = waitKey(remaining_time_to_wait); // waits to display frame
+        char key = waitKey(remaining_time_to_wait); // wait before next frame
         if (key == 'q')
             break;
 
