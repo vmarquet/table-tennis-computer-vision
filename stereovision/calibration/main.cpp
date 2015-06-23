@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <iterator>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,14 +36,18 @@ static int print_help()
             "       with w1: the number of the first webcam to use \n"
             "            w2: the number of the second webcam to use \n"
             "   --image-list <file>: the XML/YML file containing the list of images, \n"
-            "        if we don't use webcams \n" << endl;
+            "        if we don't use webcams \n"
+            "   --input-dir <dir>: the directory containing the images\n"
+            "                      (they will be read in alphabetical order)\n"
+            "   --save: save the images used for calibration in a folder\n" << endl;
     return 0;
 }
 
 enum INPUT_MODE {
     NONE,       // program will fail
     WEBCAM,     // use webcam to get images
-    IMAGE_LIST  // use XML/YML image list file
+    IMAGE_LIST, // use XML/YML image list file
+    INPUT_DIR   // a directory that contains images
 };
 
 class Settings
@@ -52,14 +57,21 @@ public:
     bool showRectified = true;  // display rectification ?
     bool useCalibrated = true;
     INPUT_MODE inputMode = NONE;  // input mode for images
-    string imageListFilename;  // only if input mode is an image list file
+    string imageListFilename;  // only if input mode is an image list file (--image-list)
+    string inputDir;  // directory to read images from, only if input mode is --input-dir
     int webcam[2];  // the number of the webcams (only if input mode is webcam)
     VideoCapture capture[2];  // the VideoCapture to access the webcam streams
     int imageNumber = 10; // number of images to get (for each cam) if input mode is webcam
+    bool save = false;  // save the calibration pictures
+    string images_output_folder = "images_calib";  // folder where to save the pictures
+    // WARNING: images will not be saved if the images_output_folder doesn't exist,
+    //          it must be created by the user
 };
 
 static bool readStringList( const string& filename, vector<string>& l );
 static void getImagesFromWebcams(Settings settings, vector<Mat>& images);
+static void getImagesFromImageList(Settings settings, vector<Mat>& images);
+static void getImagesFromInputDir(Settings settings, vector<Mat>& images);
 static void StereoCalib(const vector<Mat>& images, Settings settings);
 
 
@@ -101,6 +113,10 @@ int main(int argc, char** argv)
             settings.showRectified = false;
         // input mode: webcam or image list
         else if (string(argv[i]) == "--image-list" ) {
+            if ((i+1) >= argc) {
+                cout << "missing image list filename after --image-list" << endl;
+                return print_help();
+            }
             settings.imageListFilename = argv[++i];
             settings.inputMode = IMAGE_LIST;
         }
@@ -116,6 +132,17 @@ int main(int argc, char** argv)
                 return print_help();
             }
             settings.inputMode = WEBCAM;
+        }
+        else if (string(argv[i]) == "--input-dir" ) {
+            if ((i+1) >= argc) {
+                cout << "missing input directory path after --input-dir" << endl;
+                return print_help();
+            }
+            settings.inputDir = argv[++i];
+            settings.inputMode = INPUT_DIR;
+        }
+        else if (string(argv[i]) == "--save" ) {
+            settings.save = true;
         }
         // invalid options or parameters
         else if( string(argv[i]) == "-h" || string(argv[i]) == "--help" )
@@ -147,25 +174,25 @@ int main(int argc, char** argv)
 
     vector<Mat> images; // the images
 
-    // if the input mode is an image list (XML/YML)
-    if (settings.inputMode == IMAGE_LIST) {
-        vector<string> imageFilenames;
-        // we get the list of images from the file
-        bool ok = readStringList(settings.imageListFilename, imageFilenames);
-        if(!ok || imageFilenames.empty())
-        {
-            cout << "can not open " << settings.imageListFilename << " or the string list is empty" << endl;
-            return print_help();
-        }
-        // we load all the images
-        for (size_t i=0; i<imageFilenames.size(); i++)
-            images.push_back(imread(imageFilenames[i], CV_LOAD_IMAGE_GRAYSCALE));
-    }
-    else if (settings.inputMode == WEBCAM) {
+    // we get the calibration input images, depending on the mode selected by the user
+    if (settings.inputMode == IMAGE_LIST)
+        getImagesFromImageList(settings, images);
+    else if (settings.inputMode == INPUT_DIR)
+        getImagesFromInputDir(settings, images);
+    else if (settings.inputMode == WEBCAM)
         getImagesFromWebcams(settings, images);
-    }
-
     
+    // we save the calibration pictures, if requested by the user
+    if (settings.save) {
+        cout << "saving images..." << endl;
+        for (size_t i=0; i<images.size(); i++) {
+            ostringstream ss;
+            // append '0', to make sure images will be in alphabetical order
+            ss << setw(2) << setfill('0') << i;
+            string filename = settings.images_output_folder + ss.str() + ".png";
+            imwrite(filename, images.at(i));
+        }
+    }
 
     // we finally start the calibration process
     StereoCalib(images, settings);
@@ -481,23 +508,6 @@ static void StereoCalib(const vector<Mat>& images, Settings settings)
     } // end loop in each image
 }
 
-// read a XML/YML image list file to put all the filenames in a vector
-// @param filename -> the input XML / YML file
-// @param l -> the output list of filenames
-static bool readStringList( const string& filename, vector<string>& l )
-{
-    l.resize(0);
-    FileStorage fs(filename, FileStorage::READ);
-    if( !fs.isOpened() )
-        return false;
-    FileNode n = fs.getFirstTopLevelNode();
-    if( n.type() != FileNode::SEQ )
-        return false;
-    FileNodeIterator it = n.begin(), it_end = n.end();
-    for( ; it != it_end; ++it )
-        l.push_back((string)*it);
-    return true;
-}
 
 // get images from the webcams
 // @param settings -> the settings
@@ -523,6 +533,8 @@ static void getImagesFromWebcams(Settings settings, vector<Mat>& images) {
     //    located in different positions results in better calibration results.
     // 2. we keep the picture only when the chessboard if found, if not, we try again to find it
     //    in the next picture 
+
+    cout << "press 'd' to take a new picture" << endl;
 
     Mat frameCam1, frameCam2;
     while (images.size()/2 < settings.imageNumber) {
@@ -572,6 +584,84 @@ static void getImagesFromWebcams(Settings settings, vector<Mat>& images) {
         if (key == 'q') // exit program
             exit(0);
     }
+
+    destroyWindow("cam 1");
+    destroyWindow("cam 2");
+}
+
+// read a XML/YML image list file to put all the filenames in a vector
+// @param filename -> the input XML / YML file
+// @param l -> the output list of filenames
+static bool readStringList( const string& filename, vector<string>& l )
+{
+    l.resize(0);
+    FileStorage fs(filename, FileStorage::READ);
+    if( !fs.isOpened() )
+        return false;
+    FileNode n = fs.getFirstTopLevelNode();
+    if( n.type() != FileNode::SEQ )
+        return false;
+    FileNodeIterator it = n.begin(), it_end = n.end();
+    for( ; it != it_end; ++it )
+        l.push_back((string)*it);
+    return true;
+}
+
+// get images from an image list YML / XML file
+// @param settings -> the settings
+// @param images -> the output list of images
+static void getImagesFromImageList(Settings settings, vector<Mat>& images) {
+     vector<string> imageFilenames;
+    // we get the list of images from the file
+    bool ok = readStringList(settings.imageListFilename, imageFilenames);
+    if(!ok || imageFilenames.empty())
+    {
+        cout << "can not open " << settings.imageListFilename << " or the string list is empty" << endl;
+        print_help();
+        exit(1);
+    }
+    // we load all the images
+    for (size_t i=0; i<imageFilenames.size(); i++)
+        images.push_back(imread(imageFilenames[i], CV_LOAD_IMAGE_GRAYSCALE));
+}
+
+// get images from a folder
+// @param settings -> the settings
+// @param images -> the output list of images
+static void getImagesFromInputDir(Settings settings, vector<Mat>& images) {
+    // we get the list of images in the input directory, with the command ls
+    char list_files[1000];
+    sprintf(list_files, "ls %s", settings.inputDir.c_str());
+
+    FILE* f = popen(list_files, "r");
+    if (f == NULL) {
+        cerr << "Could not open input images directory\n" << endl;
+        print_help();
+        exit(1);
+    }
+
+    // check if we need to add a slash between folder and filename
+    bool add_slash = false;
+    if (settings.inputDir.back() != '/')
+        add_slash = true;
+
+    // for each image filename, we load the image
+    const int BUFFSIZE = 1000;
+    char filename[BUFFSIZE];
+    while(fgets(filename, BUFFSIZE, f)) {
+        char image_path[1000];
+        if (add_slash)
+            sprintf(image_path, "%s/%s", settings.inputDir.c_str(), filename);
+        else
+            sprintf(image_path, "%s%s", settings.inputDir.c_str(), filename);
+        strtok(image_path, "\n");  // we remove the trailing '\n'
+        cout << "loading: " << image_path << endl;
+        Mat image = imread(image_path, CV_LOAD_IMAGE_GRAYSCALE);
+        images.push_back(image);
+    }
+    cout << images.size() << " images loaded" << endl;
+
+    pclose(f);
 }
 
 
