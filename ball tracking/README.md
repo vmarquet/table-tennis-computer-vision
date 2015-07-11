@@ -1,1 +1,2 @@
-voit http://wiki.elphel.com/index.php?title=OpenCV_Tennis_balls_recognizing_tutorial&redirect=no
+![example picture](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdWVVNaHRHcHF3M0U)
+
