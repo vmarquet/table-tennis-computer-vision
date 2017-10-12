@@ -28,11 +28,32 @@ sudo ln -s /usr/local/Cellar/opencv/2.4.11/lib/python2.7/site-packages/cv2.so /L
 Advancement
 ===========
 
-1. First step: [camera calibration](camera calibration)
-1. Second step: [distortion correction](distortion correction)
-3. Third step: [table lines detection](table lines detection)
-4. Fourth step: [ball tracking](ball tracking)
-4. Fifth step: [3D position calculation with stereovision](stereovision)
+1. First step: [camera calibration](camera_calibration)
+2. Second step: [distortion correction](distortion_correction)
+3. Third step: [table lines detection](table_lines_detection)
+4. Fourth step: [ball tracking](ball_tracking)
+5. Fifth step: [3D position calculation with stereovision](stereovision)
     1. [calibration](stereovision/calibration)
 
+
+
+[Distortion correction](distortion_correction)
+----------------------------------------------
+
+| Before  | After |
+| ------------- | ------------- |
+| ![before](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMUEtZzU1SHNMbDA)  | ![after](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdNzdiMFJfOW5mY0E)  |
+
+
+[Table lines detection](table_lines_detection)
+----------------------------------------------
+
+| Hough transform | Rectangle detection | Hough after k-mean |
+| --------------- | ------------------- | ------------------ |
+| ![hough transform](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdUWR4WmljMHdnNVU) | ![rectangle detection](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdeUZzRHc2c2hJeE0) | ![hough transform after k-mean](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdY0tTWmFjbVJ0a28) |
+
+
+[Ball tracking](ball_tracking)
+------------------------------
+![ball tracking](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMnJTNGtJOVh4eUU)
 
