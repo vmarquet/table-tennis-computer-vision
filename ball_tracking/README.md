@@ -1,2 +1,2 @@
-![example picture](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMnJTNGtJOVh4eUU)
+![example picture](../images/ball_tracking/ball_tracking.jpg)
 

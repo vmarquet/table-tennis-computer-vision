@@ -26,7 +26,7 @@ Unfortunately, some parts of the OpenCV program are not very well commented, and
 
 * if you use a video instead of a list of pictures to do the processing, you may encounter a bug with the program (`Too long string or a last string w/o newline in function icvXMLSkipSpaces`), check [here](http://stackoverflow.com/questions/23267658/opencv-camera-calibration)
 
-You can download the chessboard picture I used [here](https://drive.google.com/folderview?id=0B31-CIvNW1Ldfks1eUk1MEI5VFVGWGVUVE9idnF1eTlMNHlLRURQYzdQNlF6bVNHbjB3R2M&usp=sharing).
+You can download the chessboard picture I used [here](../images/checkerboard.png).
 
 For an example image of the results, see [here](../distortion correction).
 

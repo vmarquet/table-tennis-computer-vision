@@ -7,14 +7,14 @@ First attempt
 -------------
 Using [Hough transform](http://docs.opencv.org/doc/tutorials/imgproc/imgtrans/hough_lines/hough_lines.html).
 
-![hough](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdM3loc3lYWlg2SE0)
+![hough](../images/table_lines_detection/hough_transform.jpg)
 
 
 Second attempt
 --------------
 Using [rectangle detection](https://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/).
 
-![rectangle](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMVMzdzV6WER5TFE)
+![rectangle](../images/table_lines_detection/detect_rectangles.jpg)
 
 
 k-mean
@@ -28,19 +28,19 @@ We can see on the above pictures that some other lines are detected whereas we d
 
 Then, we binarize the picture: the pixels belonging to the k-mean class corresponding to the table lines are set to white, and the pixels of the 3 other classes are set to black.
 
-![binarized](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdeFhMYmplOTM2LVk)
+![binarized](../images/table_lines_detection/kmean1.jpg)
 
 We apply then a few [morphological operations](http://docs.opencv.org/doc/tutorials/imgproc/opening_closing_hats/opening_closing_hats.html). First, an opening to find the big blobs in the image.
 
-![opening](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMGlmRy1BejJkVkk)
+![opening](../images/table_lines_detection/kmean2.jpg)
 
 Then, we substract the opening from the binarized image, to remove all big blobs and keep only the lines of the table.
 
-![remove blobs](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdWHBrMXdaQlNqenc)
+![remove blobs](../images/table_lines_detection/kmean3.jpg)
 
 Then, we can apply a closing to join the lines of the table and fill gaps, but it may make some blobs appear again.
 
-![closing](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdM091OU8zb0F2azQ)
+![closing](../images/table_lines_detection/kmean4.jpg)
 
 
 Hough transform on binarized image
@@ -50,7 +50,7 @@ Hough transform on binarized image
 
 We apply the Hough transform after a Canny edge detection. This gave me about 20 line segments.
 
-![hough 1](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdTEh2dGNoTlhKR28)
+![hough 1](../images/table_lines_detection/hough1.jpg)
 
 We classify all lines in four categories:
 
@@ -64,14 +64,14 @@ We classify all lines in four categories:
 
 With some math, we can compute all the line intersections around each corner in the table.
 
-![hough 2](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdYUloWXE1RmkxcTA)
+![hough 2](../images/table_lines_detection/hough2.jpg)
 
 
 ### Step 3
 
 So we have a lot of candidates for each corner of the table. The corner we select as the coordinate of the real corner of the table is the farther corner from the center of the table.
 
-![hough 3](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdX2w0ZG44Yk5oXzg)
+![hough 3](../images/table_lines_detection/hough3.jpg)
 
 ** WARNING ** : this algorithm suppose that the anti-distortion filter was successful and effective. If there is some [barrel distortion](http://en.wikipedia.org/wiki/File:Barrel_distortion.svg) on the input picture, this algorithm will give false corner coordinates that are farther from the center of the table than the actual real corners.
 

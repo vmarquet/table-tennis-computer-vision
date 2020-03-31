@@ -2,10 +2,10 @@ An attempt to detect the corners of the table using the OpenCV [convex hull](htt
 
 Source image:
 
-![source](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdWHBrMXdaQlNqenc)
+![source](../../images/table_lines_detection/kmean3.jpg)
 
 Result:
 
-![result](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdUWhVcV94ZjNDX2c)
+![result](../../images/table_lines_detection/convex_hull.jpg)
 
 

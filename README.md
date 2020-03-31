@@ -42,7 +42,7 @@ Advancement
 
 | Before  | After |
 | ------------- | ------------- |
-| ![before](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMUEtZzU1SHNMbDA)  | ![after](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdNzdiMFJfOW5mY0E)  |
+| ![before](images/distortion_correction/before.jpg)  | ![after](images/distortion_correction/after.jpg)  |
 
 
 [Table lines detection](table_lines_detection)
@@ -50,10 +50,10 @@ Advancement
 
 | Hough transform | Rectangle detection | Hough after k-mean |
 | --------------- | ------------------- | ------------------ |
-| ![hough transform](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdUWR4WmljMHdnNVU) | ![rectangle detection](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdeUZzRHc2c2hJeE0) | ![hough transform after k-mean](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdY0tTWmFjbVJ0a28) |
+| ![hough transform](images/table_lines_detection/hough_transform.jpg) | ![rectangle detection](images/table_lines_detection/detect_rectangles.jpg) | ![hough transform after k-mean](images/table_lines_detection/hough3.jpg) |
 
 
 [Ball tracking](ball_tracking)
 ------------------------------
-![ball tracking](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdMnJTNGtJOVh4eUU)
+![ball tracking](images/ball_tracking/ball_tracking.jpg)
 

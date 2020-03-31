@@ -13,9 +13,9 @@ Example: GoPro Hero 3+ medium mode
 
 ### Before
 
-![before](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdN0gyMzM4RmpFWWM)
+![before](../images/distortion_correction/before.jpg)
 
 ### After
 
-![after](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdYzlzNGp0TnhFd2s)
+![after](../images/distortion_correction/after.jpg)
 
